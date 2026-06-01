@@ -36,7 +36,7 @@ cd H:\work\xplayer
 
 **成功标志**：`AUTOMATION PASSED`、`BROWSER-TEST PASSED`、`DEV-VERIFY PASSED`。
 
-单独跑浏览器测试：`.\scripts\run-browser-test.ps1`（本机 Edge，npm/playwright 走 npmmirror；无需下 180MB Chromium）。
+单独跑浏览器测试：`.\scripts\run-browser-test.ps1`（**会弹出 Edge 窗口**）。无头模式：`.\scripts\run-browser-test.ps1 -Headless`。
 
 ## 4. 失败则循环
 

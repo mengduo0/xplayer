@@ -1,10 +1,13 @@
-# 启动 MySQL + 后端 + 前端，Playwright E2E（本机 Edge，国内 npm 镜像）
+# 启动 MySQL + 后端 + 前端，Playwright E2E（本机 Edge，默认弹出浏览器窗口）
+param([switch]$Headless)
+
 $ErrorActionPreference = "Stop"
 $Root = Split-Path $PSScriptRoot -Parent
 $Jar = Join-Path $Root "backend\target\xplayer-backend-1.0.0.jar"
 $Frontend = Join-Path $Root "frontend"
 
 . (Join-Path $PSScriptRoot "playwright-env.ps1")
+if ($Headless) { Remove-Item Env:PW_HEADED -ErrorAction SilentlyContinue } else { $env:PW_HEADED = "1" }
 Remove-Item Env:SPRING_PROFILES_ACTIVE -ErrorAction SilentlyContinue
 
 function Stop-Port([int]$Port) {
@@ -59,7 +62,8 @@ try {
     }
 
     $channel = if ($env:PW_CHANNEL) { $env:PW_CHANNEL } else { "msedge (system)" }
-    Write-Host "=== browser-test: Playwright channel=$channel (skip Chromium download) ==="
+    $mode = if ($env:PW_HEADED -eq "1") { "headed (visible browser)" } else { "headless" }
+    Write-Host "=== browser-test: Playwright channel=$channel, $mode ==="
 
     $prevEap = $ErrorActionPreference
     $ErrorActionPreference = "Continue"

@@ -11,7 +11,8 @@ export default defineConfig({
   use: {
     baseURL: 'http://127.0.0.1:5173',
     channel,
-    headless: true,
+    // PW_HEADED=1 时弹出浏览器（run-browser-test.ps1 默认开启）
+    headless: process.env.PW_HEADED !== '1',
     locale: 'zh-CN',
     screenshot: 'only-on-failure',
     trace: 'retain-on-failure',
