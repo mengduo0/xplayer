@@ -1,0 +1,25 @@
+services:
+  mysql:
+    # 本地无 mysql:8.0 时可先: docker pull docker.m.daocloud.io/library/mysql:8.0 && docker tag ... mysql:8.0
+    image: mysql:8.0
+    container_name: xplayer-mysql
+    restart: unless-stopped
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: xplayer
+      MYSQL_USER: xplayer
+      MYSQL_PASSWORD: xplayer
+    volumes:
+      - xplayer-mysql-data:/var/lib/mysql
+      - ./sql/init.sql:/docker-entrypoint-initdb.d/01-init.sql:ro
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-uxplayer", "-pxplayer"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+
+volumes:
+  xplayer-mysql-data:

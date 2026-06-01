@@ -1,0 +1,12 @@
+.tools/
+backend/target/
+frontend/node_modules/
+frontend/dist/
+frontend/test-results/
+frontend/playwright-report/
+frontend/blob-report/
+sql/seed-generated.sql
+*.log
+.idea/
+.vscode/launch.json.user
+sql/seed-generated.sql

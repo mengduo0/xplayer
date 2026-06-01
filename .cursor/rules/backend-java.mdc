@@ -1,0 +1,15 @@
+---
+description: XPlayer Java/Spring Boot 后端约定
+globs: xplayer/backend/**/*
+alwaysApply: false
+---
+
+# 后端约定
+
+- Spring Boot 2.7，Java 8，包名 `com.xplayer`
+- 列表 API：`GET /api/videos`（MySQL `video` 表）
+- 流式播放：`GET /api/videos/{id}/stream`，文件从 `xplayer.media-root` 解析，禁止 `..` 路径穿越
+- 返回 `Resource` 以支持浏览器 Range 请求
+- 配置：`backend/src/main/resources/application.yml`
+- 构建：无全局 Maven 时用 `.\scripts\build-backend.ps1`（自动下载 Maven 到 `.tools`）
+- **改后端后必跑**：`.\scripts\dev-verify.ps1`（见 `dev-workflow.mdc`）

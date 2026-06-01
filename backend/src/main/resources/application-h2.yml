@@ -1,0 +1,18 @@
+# Offline smoke only — activate with: -Dspring.profiles.active=h2 or -UseH2
+# Production/default uses application.yml + Docker MySQL.
+
+spring:
+  datasource:
+    url: jdbc:h2:mem:xplayer;MODE=MySQL;DB_CLOSE_DELAY=-1;DATABASE_TO_LOWER=TRUE
+    username: sa
+    password:
+    driver-class-name: org.h2.Driver
+  sql:
+    init:
+      mode: always
+      schema-locations: classpath:schema-h2.sql
+      data-locations: classpath:data-h2.sql
+  h2:
+    console:
+      enabled: true
+      path: /h2-console

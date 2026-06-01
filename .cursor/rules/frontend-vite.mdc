@@ -1,0 +1,13 @@
+---
+description: XPlayer 前端 Vite 播放器约定
+globs: xplayer/frontend/**/*
+alwaysApply: false
+---
+
+# 前端约定
+
+- Vite 纯 JS + HTML5 `<video>`，无框架
+- 开发代理：`vite.config.js` 将 `/api` 代理到 `8080`
+- 播放地址使用接口返回的 `streamUrl`（相对路径，走代理）
+- 样式：`frontend/src/style.css`，逻辑：`frontend/src/main.js`
+- **改前端后必跑**：`.\scripts\dev-verify.ps1`（见 `dev-workflow.mdc`）

@@ -1,0 +1,63 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "xplayer: setup",
+      "type": "shell",
+      "command": "powershell",
+      "args": ["-ExecutionPolicy", "Bypass", "-File", "${workspaceFolder}/xplayer/scripts/setup.ps1"],
+      "options": { "cwd": "${workspaceFolder}/xplayer" },
+      "group": "build"
+    },
+    {
+      "label": "xplayer: build backend",
+      "type": "shell",
+      "command": "powershell",
+      "args": ["-ExecutionPolicy", "Bypass", "-File", "${workspaceFolder}/xplayer/scripts/build-backend.ps1"],
+      "options": { "cwd": "${workspaceFolder}/xplayer" },
+      "group": "build"
+    },
+    {
+      "label": "xplayer: run backend",
+      "type": "shell",
+      "command": "powershell",
+      "args": ["-ExecutionPolicy", "Bypass", "-File", "${workspaceFolder}/xplayer/scripts/run-backend.ps1"],
+      "options": { "cwd": "${workspaceFolder}/xplayer" },
+      "isBackground": true,
+      "problemMatcher": []
+    },
+    {
+      "label": "xplayer: run frontend",
+      "type": "shell",
+      "command": "powershell",
+      "args": ["-ExecutionPolicy", "Bypass", "-File", "${workspaceFolder}/xplayer/scripts/run-frontend.ps1"],
+      "options": { "cwd": "${workspaceFolder}/xplayer" },
+      "isBackground": true,
+      "problemMatcher": []
+    },
+    {
+      "label": "xplayer: browser test",
+      "type": "shell",
+      "command": "powershell",
+      "args": ["-ExecutionPolicy", "Bypass", "-File", "${workspaceFolder}/xplayer/scripts/run-browser-test.ps1"],
+      "options": { "cwd": "${workspaceFolder}/xplayer" },
+      "group": "test"
+    },
+    {
+      "label": "xplayer: dev-verify",
+      "type": "shell",
+      "command": "powershell",
+      "args": ["-ExecutionPolicy", "Bypass", "-File", "${workspaceFolder}/xplayer/scripts/dev-verify.ps1"],
+      "options": { "cwd": "${workspaceFolder}/xplayer" },
+      "group": { "kind": "test", "isDefault": true }
+    },
+    {
+      "label": "xplayer: automation",
+      "type": "shell",
+      "command": "powershell",
+      "args": ["-ExecutionPolicy", "Bypass", "-File", "${workspaceFolder}/xplayer/scripts/run-automation.ps1"],
+      "options": { "cwd": "${workspaceFolder}/xplayer" },
+      "group": "test"
+    }
+  ]
+}

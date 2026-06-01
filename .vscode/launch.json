@@ -1,0 +1,20 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "java",
+      "name": "XPlayer Backend",
+      "request": "launch",
+      "mainClass": "com.xplayer.XPlayerApplication",
+      "projectName": "xplayer-backend",
+      "cwd": "${workspaceFolder}/xplayer/backend"
+    }
+  ],
+  "compounds": [
+    {
+      "name": "XPlayer Full Stack",
+      "configurations": ["XPlayer Backend"],
+      "preLaunchTask": "xplayer: run frontend"
+    }
+  ]
+}
