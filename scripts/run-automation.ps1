@@ -58,6 +58,20 @@ try {
         if ($code -ne "200") { throw "Stream check failed for $($pick.fileName): HTTP $code" }
         Write-Host "Stream ($($pick.fileName)): HTTP $code"
     }
+
+    Write-Host "CRUD: add + delete"
+    $file = "2.mp4"
+    $existing = $videos | Where-Object { $_.fileName -eq $file }
+    if ($existing) {
+        Invoke-RestMethod -Method Delete -Uri "http://127.0.0.1:8080/api/videos/$($existing.id)" | Out-Null
+    }
+    $created = Invoke-RestMethod -Method Post -Uri "http://127.0.0.1:8080/api/videos" -ContentType "application/json" -Body "{`"fileName`":`"$file`",`"title`":`"auto-test`"}"
+    if (-not $created.id) { throw "POST /api/videos failed" }
+    $del = Invoke-RestMethod -Method Delete -Uri "http://127.0.0.1:8080/api/videos/$($created.id)"
+    if (-not $del.deleted) { throw "DELETE /api/videos failed" }
+    Invoke-RestMethod -Method Post -Uri "http://127.0.0.1:8080/api/videos" -ContentType "application/json" -Body "{`"fileName`":`"$file`",`"title`":`"2`"}" | Out-Null
+    Write-Host "CRUD OK (id=$($created.id))"
+
     Write-Host "AUTOMATION PASSED"
     exit 0
 } finally {

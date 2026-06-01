@@ -276,6 +276,89 @@ body::before {
   border-radius: 999px;
 }
 
+.add-form {
+  display: grid;
+  grid-template-columns: 1fr 1fr auto;
+  gap: 8px;
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg-card);
+}
+
+@media (max-width: 960px) {
+  .add-form {
+    grid-template-columns: 1fr;
+  }
+}
+
+.add-input {
+  padding: 8px 12px;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  background: var(--bg-elevated);
+  color: var(--text);
+  font-size: 0.85rem;
+  font-family: inherit;
+}
+
+.add-input:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px rgba(0, 161, 214, 0.2);
+}
+
+.btn {
+  border: none;
+  border-radius: var(--radius-sm);
+  font-size: 0.85rem;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  transition: opacity 0.15s ease, transform 0.1s ease;
+}
+
+.btn:active {
+  transform: scale(0.98);
+}
+
+.btn-primary {
+  padding: 8px 16px;
+  background: var(--accent-gradient);
+  color: #fff;
+  white-space: nowrap;
+}
+
+.btn-primary:hover {
+  opacity: 0.9;
+}
+
+.btn-delete {
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: none;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 1.25rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.btn-delete:hover {
+  background: rgba(255, 107, 122, 0.15);
+  color: var(--danger);
+}
+
+.form-error {
+  margin: 0;
+  padding: 0 14px 10px;
+  font-size: 0.8rem;
+  color: var(--danger);
+  background: var(--bg-card);
+}
+
 .playlist {
   list-style: none;
   margin: 0;
@@ -295,11 +378,11 @@ body::before {
 
 .playlist li {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   gap: 12px;
   padding: 12px 14px;
   border-radius: var(--radius-md);
-  cursor: pointer;
+  cursor: default;
   border: 1px solid transparent;
   margin-bottom: 4px;
   transition: background 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
@@ -337,6 +420,7 @@ body::before {
 .item-body {
   min-width: 0;
   flex: 1;
+  cursor: pointer;
 }
 
 .playlist .title {

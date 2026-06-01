@@ -5,9 +5,14 @@ const playlistEl = document.getElementById('playlist');
 const playlistCountEl = document.getElementById('playlist-count');
 const statusEl = document.getElementById('status');
 const nowPlayingEl = document.getElementById('now-playing');
+const addForm = document.getElementById('add-form');
+const addFileInput = document.getElementById('add-file');
+const addTitleInput = document.getElementById('add-title');
+const addErrorEl = document.getElementById('add-error');
 
 let videos = [];
 let activeId = null;
+let initialLoadDone = false;
 
 async function checkHealth() {
   try {
@@ -24,7 +29,7 @@ async function checkHealth() {
   }
 }
 
-async function loadPlaylist() {
+async function loadPlaylist(autoPlayFirst = false) {
   const res = await fetch(`${API_BASE}/api/videos`);
   if (!res.ok) {
     throw new Error(`加载列表失败: HTTP ${res.status}`);
@@ -32,7 +37,20 @@ async function loadPlaylist() {
   videos = await res.json();
   updatePlaylistCount();
   renderPlaylist();
-  if (videos.length > 0) {
+
+  if (videos.length === 0) {
+    activeId = null;
+    player.removeAttribute('src');
+    nowPlayingEl.textContent = '请选择列表中的视频';
+    return;
+  }
+
+  const stillExists = videos.some((v) => v.id === activeId);
+  if (!stillExists) {
+    activeId = null;
+  }
+
+  if (autoPlayFirst || !stillExists) {
     playVideo(videos[0].id);
   }
 }
@@ -43,10 +61,22 @@ function updatePlaylistCount() {
   }
 }
 
+function showAddError(message) {
+  if (!addErrorEl) return;
+  if (message) {
+    addErrorEl.textContent = message;
+    addErrorEl.hidden = false;
+  } else {
+    addErrorEl.textContent = '';
+    addErrorEl.hidden = true;
+  }
+}
+
 function renderPlaylist() {
   playlistEl.innerHTML = '';
   if (!videos.length) {
-    playlistEl.innerHTML = '<li class="empty">暂无视频，请检查 MySQL 数据与 G:/mv 文件</li>';
+    playlistEl.innerHTML =
+      '<li class="empty">列表为空，在上方添加 G:/mv 下的视频文件</li>';
     return;
   }
   videos.forEach((item, index) => {
@@ -58,8 +88,13 @@ function renderPlaylist() {
         <span class="title">${escapeHtml(item.title)}</span>
         <span class="meta">${escapeHtml(item.fileName)}</span>
       </div>
+      <button type="button" class="btn-delete" data-testid="delete-video" title="从列表移除" aria-label="删除">×</button>
     `;
-    li.addEventListener('click', () => playVideo(item.id));
+    li.querySelector('.item-body').addEventListener('click', () => playVideo(item.id));
+    li.querySelector('.btn-delete').addEventListener('click', (e) => {
+      e.stopPropagation();
+      deleteVideo(item.id);
+    });
     if (item.id === activeId) {
       li.classList.add('active');
     }
@@ -87,6 +122,52 @@ function playVideo(id) {
   scrollActiveIntoView();
 }
 
+async function addVideo(fileName, title) {
+  const body = { fileName: fileName.trim() };
+  if (title && title.trim()) {
+    body.title = title.trim();
+  }
+  const res = await fetch(`${API_BASE}/api/videos`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body),
+  });
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) {
+    throw new Error(data.error || `添加失败: HTTP ${res.status}`);
+  }
+  return data;
+}
+
+async function deleteVideo(id) {
+  const res = await fetch(`${API_BASE}/api/videos/${id}`, { method: 'DELETE' });
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) {
+    throw new Error(data.error || `删除失败: HTTP ${res.status}`);
+  }
+  await loadPlaylist(false);
+}
+
+addForm.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  showAddError('');
+  const fileName = addFileInput.value.trim();
+  const title = addTitleInput.value.trim();
+  if (!fileName) {
+    showAddError('请输入文件名');
+    return;
+  }
+  try {
+    const created = await addVideo(fileName, title);
+    addFileInput.value = '';
+    addTitleInput.value = '';
+    await loadPlaylist(false);
+    playVideo(created.id);
+  } catch (err) {
+    showAddError(err.message);
+  }
+});
+
 function escapeHtml(text) {
   const div = document.createElement('div');
   div.textContent = text ?? '';
@@ -96,7 +177,8 @@ function escapeHtml(text) {
 async function init() {
   await checkHealth();
   try {
-    await loadPlaylist();
+    await loadPlaylist(!initialLoadDone);
+    initialLoadDone = true;
   } catch (e) {
     playlistEl.innerHTML = `<li class="empty">${escapeHtml(e.message)}</li>`;
     statusEl.textContent = '加载失败';

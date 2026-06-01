@@ -42,6 +42,27 @@
             <h2>播放列表</h2>
             <span id="playlist-count" class="playlist-count">—</span>
           </div>
+
+          <form id="add-form" class="add-form" data-testid="add-form">
+            <input
+              id="add-file"
+              class="add-input"
+              type="text"
+              placeholder="文件名，如 1.mp4"
+              data-testid="add-file"
+              required
+            />
+            <input
+              id="add-title"
+              class="add-input"
+              type="text"
+              placeholder="标题（可选）"
+              data-testid="add-title"
+            />
+            <button type="submit" class="btn btn-primary" data-testid="add-submit">添加</button>
+          </form>
+          <p id="add-error" class="form-error" hidden data-testid="add-error"></p>
+
           <ul id="playlist" class="playlist" data-testid="playlist"></ul>
         </aside>
       </main>

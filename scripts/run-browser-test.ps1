@@ -31,8 +31,11 @@ if (-not (Test-Path $Jar)) {
 }
 
 Write-Host "=== browser-test: MySQL ==="
-if (-not (& (Join-Path $PSScriptRoot "ensure-mysql.ps1"))) {
-    throw "MySQL required for browser E2E."
+if (& (Join-Path $PSScriptRoot "ensure-mysql.ps1")) {
+    Remove-Item Env:SPRING_PROFILES_ACTIVE -ErrorAction SilentlyContinue
+} else {
+    Write-Warning "MySQL unavailable; browser E2E uses h2 profile."
+    $env:SPRING_PROFILES_ACTIVE = "h2"
 }
 
 Write-Host "=== browser-test: stop old services ==="
