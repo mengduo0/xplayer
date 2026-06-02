@@ -1,4 +1,8 @@
+import { initStarfield } from './starfield.js';
+
 const API_BASE = '';
+
+initStarfield(document.getElementById('starfield'));
 
 const player = document.getElementById('player');
 const playlistEl = document.getElementById('playlist');
