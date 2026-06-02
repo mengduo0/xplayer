@@ -5,14 +5,23 @@ const playlistEl = document.getElementById('playlist');
 const playlistCountEl = document.getElementById('playlist-count');
 const statusEl = document.getElementById('status');
 const nowPlayingEl = document.getElementById('now-playing');
-const addForm = document.getElementById('add-form');
-const addFileInput = document.getElementById('add-file');
-const addTitleInput = document.getElementById('add-title');
 const addErrorEl = document.getElementById('add-error');
+const localFileInput = document.getElementById('local-file-input');
+const openLocalBtn = document.getElementById('open-local-btn');
+const addLocalBtn = document.getElementById('add-local-btn');
 
 let videos = [];
 let activeId = null;
 let initialLoadDone = false;
+let localBlobUrl = null;
+let currentLocalFile = null;
+
+function revokeLocalBlob() {
+  if (localBlobUrl) {
+    URL.revokeObjectURL(localBlobUrl);
+    localBlobUrl = null;
+  }
+}
 
 async function checkHealth() {
   try {
@@ -39,9 +48,12 @@ async function loadPlaylist(autoPlayFirst = false) {
   renderPlaylist();
 
   if (videos.length === 0) {
-    activeId = null;
-    player.removeAttribute('src');
-    nowPlayingEl.textContent = '请选择列表中的视频';
+    if (!currentLocalFile) {
+      activeId = null;
+      revokeLocalBlob();
+      player.removeAttribute('src');
+      nowPlayingEl.textContent = '请选择列表中的视频';
+    }
     return;
   }
 
@@ -50,7 +62,7 @@ async function loadPlaylist(autoPlayFirst = false) {
     activeId = null;
   }
 
-  if (autoPlayFirst || !stillExists) {
+  if ((autoPlayFirst || !stillExists) && !currentLocalFile) {
     playVideo(videos[0].id);
   }
 }
@@ -75,8 +87,7 @@ function showAddError(message) {
 function renderPlaylist() {
   playlistEl.innerHTML = '';
   if (!videos.length) {
-    playlistEl.innerHTML =
-      '<li class="empty">列表为空，在上方添加 G:/mv 下的视频文件</li>';
+    playlistEl.innerHTML = '<li class="empty">列表为空</li>';
     return;
   }
   videos.forEach((item, index) => {
@@ -95,7 +106,7 @@ function renderPlaylist() {
       e.stopPropagation();
       deleteVideo(item.id);
     });
-    if (item.id === activeId) {
+    if (item.id === activeId && !currentLocalFile) {
       li.classList.add('active');
     }
     playlistEl.appendChild(li);
@@ -109,9 +120,31 @@ function scrollActiveIntoView() {
   }
 }
 
+function playLocalFile(file) {
+  if (!file) return;
+  revokeLocalBlob();
+  currentLocalFile = file;
+  activeId = null;
+  localBlobUrl = URL.createObjectURL(file);
+  player.src = localBlobUrl;
+  player.load();
+  player.play().catch(() => {});
+  const baseName = file.name.replace(/\.[^.]+$/, '');
+  nowPlayingEl.textContent = `${baseName}（本地文件）`;
+  if (addLocalBtn) {
+    addLocalBtn.disabled = false;
+  }
+  renderPlaylist();
+}
+
 function playVideo(id) {
   const item = videos.find((v) => v.id === id);
   if (!item) return;
+  currentLocalFile = null;
+  if (addLocalBtn) {
+    addLocalBtn.disabled = true;
+  }
+  revokeLocalBlob();
   activeId = id;
   const url = `${API_BASE}${item.streamUrl}`;
   player.src = url;
@@ -148,23 +181,35 @@ async function deleteVideo(id) {
   await loadPlaylist(false);
 }
 
-addForm.addEventListener('submit', async (e) => {
-  e.preventDefault();
+openLocalBtn.addEventListener('click', () => {
   showAddError('');
-  const fileName = addFileInput.value.trim();
-  const title = addTitleInput.value.trim();
-  if (!fileName) {
-    showAddError('请输入文件名');
-    return;
+  localFileInput.click();
+});
+
+localFileInput.addEventListener('change', () => {
+  const file = localFileInput.files && localFileInput.files[0];
+  localFileInput.value = '';
+  if (file) {
+    playLocalFile(file);
   }
+});
+
+addLocalBtn.addEventListener('click', async () => {
+  if (!currentLocalFile) return;
+  showAddError('');
+  const title = currentLocalFile.name.replace(/\.[^.]+$/, '');
   try {
-    const created = await addVideo(fileName, title);
-    addFileInput.value = '';
-    addTitleInput.value = '';
+    const created = await addVideo(currentLocalFile.name, title);
+    currentLocalFile = null;
+    if (addLocalBtn) {
+      addLocalBtn.disabled = true;
+    }
     await loadPlaylist(false);
     playVideo(created.id);
   } catch (err) {
-    showAddError(err.message);
+    showAddError(
+      `${err.message}（仅能将 G:/mv 目录下已存在的同名文件加入列表）`
+    );
   }
 });
 

@@ -1,10 +1,10 @@
-# 仅灌入固定素材：1.mp4、2.mp4、3.mp4（目录 G:/mv）
+# 仅灌入固定素材：default.mp4（目录 G:/mv）
 
 param(
 
     [string]$MediaRoot = "G:/mv",
 
-    [string[]]$AllowedFiles = @("1.mp4", "2.mp4", "3.mp4")
+    [string[]]$AllowedFiles = @("default.mp4")
 
 )
 
@@ -70,7 +70,7 @@ $utf8 = New-Object System.Text.UTF8Encoding $false
 
 [System.IO.File]::WriteAllLines($outSql, $lines.ToArray(), $utf8)
 
-Write-Host "Wrote $added entries (1.mp4, 2.mp4, 3.mp4) to $outSql"
+Write-Host "Wrote $added entries ($($AllowedFiles -join ', ')) to $outSql"
 
 
 

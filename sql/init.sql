@@ -32,17 +32,13 @@ CREATE TABLE IF NOT EXISTS video (
 
 
 
--- 固定素材：仅 G:/mv 下的 1.mp4、2.mp4、3.mp4
+-- 固定素材：G:/mv 下的 default.mp4
 
 
 
 INSERT INTO video (title, file_name, sort_order) VALUES
 
-  ('1', '1.mp4', 1),
-
-  ('2', '2.mp4', 2),
-
-  ('3', '3.mp4', 3)
+  ('default', 'default.mp4', 1)
 
 ON DUPLICATE KEY UPDATE title = VALUES(title), sort_order = VALUES(sort_order);
 

@@ -6,6 +6,12 @@ $Root = Split-Path $PSScriptRoot -Parent
 Set-Location $Root
 
 Write-Host "=== dev-verify: build ==="
+function Stop-Port([int]$Port) {
+    Get-NetTCPConnection -LocalPort $Port -ErrorAction SilentlyContinue |
+        ForEach-Object { Stop-Process -Id $_.OwningProcess -Force -ErrorAction SilentlyContinue }
+}
+Stop-Port 8080
+Start-Sleep -Seconds 1
 & (Join-Path $PSScriptRoot "build-backend.ps1")
 
 Push-Location (Join-Path $Root "frontend")
