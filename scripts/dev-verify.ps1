@@ -1,5 +1,5 @@
-# 每次改码后的统一自测入口：编译 → API 冒烟 → 浏览器 E2E
-param([switch]$Headless)
+# 每次改码后的统一自测入口：编译 → API 冒烟 → 浏览器 E2E → 打开浏览器目视验收
+param([switch]$NoPreview)
 
 $ErrorActionPreference = "Stop"
 $Root = Split-Path $PSScriptRoot -Parent
@@ -28,10 +28,15 @@ Write-Host "=== dev-verify: API automation ==="
 if ($LASTEXITCODE -and $LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
 Write-Host "=== dev-verify: browser E2E ==="
-$browserArgs = @()
-if ($Headless) { $browserArgs += "-Headless" }
+$browserArgs = @("-Headless")
 & (Join-Path $PSScriptRoot "run-browser-test.ps1") @browserArgs
 if ($LASTEXITCODE -and $LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+if (-not $NoPreview) {
+    Write-Host "=== dev-verify: open browser preview ==="
+    & (Join-Path $PSScriptRoot "open-preview.ps1")
+    if ($LASTEXITCODE -and $LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+}
 
 Write-Host "=== DEV-VERIFY PASSED ==="
 exit 0

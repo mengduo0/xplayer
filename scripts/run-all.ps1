@@ -27,7 +27,8 @@ try {
     Write-Warning "Backend not ready yet: $_"
 }
 
-Write-Host "Open: http://127.0.0.1:5173 (or http://localhost:5173)"
+Write-Host "Open: http://127.0.0.1:5173"
+& (Join-Path $PSScriptRoot "open-browser-front.ps1")
 Write-Host "Press Ctrl+C to stop frontend; backend job will be stopped."
 
 try {
