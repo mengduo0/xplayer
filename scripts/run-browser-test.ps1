@@ -57,6 +57,16 @@ try {
     if (-not (Wait-Url "http://127.0.0.1:5173")) {
         throw "Frontend did not start on :5173"
     }
+    if (-not (Wait-Url "http://127.0.0.1:5173/api/health")) {
+        throw "Vite proxy to backend not ready (5173/api/health)"
+    }
+    if (-not (Wait-Url "http://127.0.0.1:5173/src/main.js")) {
+        throw "Frontend dev assets not ready (/src/main.js)"
+    }
+
+    if (-not $env:SPRING_PROFILES_ACTIVE -and (Test-Path "G:/mv")) {
+        & (Join-Path $PSScriptRoot "seed-from-mv.ps1")
+    }
 
     Push-Location $Frontend
     if (-not (Test-Path "node_modules")) {

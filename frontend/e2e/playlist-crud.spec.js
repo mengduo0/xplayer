@@ -6,7 +6,7 @@ test.describe('播放列表增删', () => {
     await expect(page.getByTestId('backend-status')).toHaveText(/服务正常/, { timeout: 20_000 });
 
     const playlist = page.getByTestId('playlist');
-    const targetFile = '1.mp4';
+    const targetFile = 'default.mp4';
 
     const existing = playlist.locator('li', { hasText: targetFile });
     if ((await existing.count()) > 0) {
@@ -14,9 +14,12 @@ test.describe('播放列表增删', () => {
       await expect(playlist.locator('li', { hasText: targetFile })).toHaveCount(0, { timeout: 10_000 });
     }
 
-    await page.getByTestId('add-file').fill(targetFile);
-    await page.getByTestId('add-title').fill('E2E测试');
-    await page.getByTestId('add-submit').click();
+    const addRes = await page.request.post('/api/videos', {
+      data: { fileName: targetFile, title: 'E2E测试' },
+    });
+    expect(addRes.ok()).toBeTruthy();
+    await page.reload();
+    await expect(page.getByTestId('backend-status')).toHaveText(/服务正常/, { timeout: 20_000 });
 
     await expect(playlist.locator('li', { hasText: 'E2E测试' })).toBeVisible({ timeout: 10_000 });
 

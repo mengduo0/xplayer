@@ -32,8 +32,35 @@
             <div class="player-gradient" aria-hidden="true"></div>
           </div>
           <div class="player-meta">
+            <div class="local-toolbar">
+              <input
+                id="local-file-input"
+                type="file"
+                accept="video/*,.mp4,.mkv,.webm,.ts,.avi,.mov"
+                hidden
+                data-testid="local-file-input"
+              />
+              <button
+                type="button"
+                id="open-local-btn"
+                class="btn btn-secondary"
+                data-testid="open-local-file"
+              >
+                打开本地文件
+              </button>
+              <button
+                type="button"
+                id="add-local-btn"
+                class="btn btn-outline"
+                data-testid="add-local-to-playlist"
+                disabled
+                title="将当前本地文件按文件名加入列表（需文件在 G:/mv 目录）"
+              >
+                加入播放列表
+              </button>
+            </div>
             <p id="now-playing" class="now-playing">请选择列表中的视频</p>
-            <span class="now-playing-hint">支持进度拖拽 · 列表切换即时播放</span>
+            <span id="now-playing-hint">支持从资源管理器选择本地视频即时播放</span>
           </div>
         </section>
 
@@ -43,24 +70,6 @@
             <span id="playlist-count" class="playlist-count">—</span>
           </div>
 
-          <form id="add-form" class="add-form" data-testid="add-form">
-            <input
-              id="add-file"
-              class="add-input"
-              type="text"
-              placeholder="文件名，如 1.mp4"
-              data-testid="add-file"
-              required
-            />
-            <input
-              id="add-title"
-              class="add-input"
-              type="text"
-              placeholder="标题（可选）"
-              data-testid="add-title"
-            />
-            <button type="submit" class="btn btn-primary" data-testid="add-submit">添加</button>
-          </form>
           <p id="add-error" class="form-error" hidden data-testid="add-error"></p>
 
           <ul id="playlist" class="playlist" data-testid="playlist"></ul>

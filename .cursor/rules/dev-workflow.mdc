@@ -49,7 +49,7 @@ cd H:\work\xplayer
 | 项 | 值 |
 |----|-----|
 | 根目录 | `H:\work\xplayer` |
-| 视频 | `G:/mv`（`xplayer.media-root`） |
+| 视频 | `G:/mv`（`xplayer.media-root`，自测固定 `default.mp4`） |
 | MySQL | `.\scripts\ensure-mysql.ps1`（需 Docker Desktop） |
 | 后端 | `http://127.0.0.1:8080` |
 | 前端 | `http://127.0.0.1:5173` |
