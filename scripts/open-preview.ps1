@@ -61,9 +61,7 @@ if (Test-PreviewReady) {
     }
     Start-Process -FilePath $java -ArgumentList $javaArgs -PassThru -WindowStyle Hidden | Out-Null
 
-    $npm = (Get-Command npm.cmd -ErrorAction SilentlyContinue).Source
-    if (-not $npm) { $npm = "npm.cmd" }
-    Start-Process -FilePath $npm -ArgumentList "run", "dev" -WorkingDirectory $Frontend -PassThru -WindowStyle Hidden | Out-Null
+    & (Join-Path $PSScriptRoot "start-vite-dev.ps1") -FrontendDir $Frontend | Out-Null
 
     if (-not (Wait-Url "http://127.0.0.1:8080/api/health")) {
         throw "Backend did not start on :8080"

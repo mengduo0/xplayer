@@ -45,9 +45,7 @@ Start-Sleep -Seconds 1
 
 $java = if ($env:JAVA_HOME) { Join-Path $env:JAVA_HOME "bin\java.exe" } else { "java" }
 $backendProc = Start-Process -FilePath $java -ArgumentList "-jar", $Jar -PassThru -WindowStyle Hidden
-$npm = (Get-Command npm.cmd -ErrorAction SilentlyContinue).Source
-if (-not $npm) { $npm = "npm.cmd" }
-$frontendProc = Start-Process -FilePath $npm -ArgumentList "run", "dev" -WorkingDirectory $Frontend -PassThru -WindowStyle Hidden
+$frontendProc = & (Join-Path $PSScriptRoot "start-vite-dev.ps1") -FrontendDir $Frontend
 
 try {
     Write-Host "=== browser-test: wait services ==="
