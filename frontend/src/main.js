@@ -1,8 +1,26 @@
 import { initStarfield } from './starfield.js';
+import { initTheme, getTheme } from './theme.js';
 
 const API_BASE = '';
 
-initStarfield(document.getElementById('starfield'));
+let destroyStarfield = null;
+
+function syncStarfield() {
+  const canvas = document.getElementById('starfield');
+  if (!canvas) return;
+  const isAurora = getTheme() === 'aurora';
+  if (isAurora && !destroyStarfield) {
+    const cleanup = initStarfield(canvas);
+    destroyStarfield = typeof cleanup === 'function' ? cleanup : null;
+  } else if (!isAurora && destroyStarfield) {
+    destroyStarfield();
+    destroyStarfield = null;
+  }
+}
+
+initTheme();
+syncStarfield();
+document.addEventListener('xplayer-theme-change', syncStarfield);
 
 const player = document.getElementById('player');
 const playlistEl = document.getElementById('playlist');
