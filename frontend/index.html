@@ -4,6 +4,12 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>XPlayer</title>
+    <script>
+      (function () {
+        var t = localStorage.getItem('xplayer-theme');
+        document.documentElement.setAttribute('data-theme', t === 'aurora' ? 'aurora' : 'light');
+      })();
+    </script>
     <link rel="stylesheet" href="/src/style.css" />
   </head>
   <body>
@@ -17,7 +23,20 @@
             <span class="brand-sub">本地媒体中心</span>
           </div>
         </div>
-        <span id="status" class="status" data-testid="backend-status">连接中…</span>
+        <div class="top-bar-actions">
+          <button
+            type="button"
+            id="theme-toggle"
+            class="theme-toggle"
+            data-testid="theme-toggle"
+            title="切换主题"
+            aria-label="切换主题"
+          >
+            <span class="theme-toggle-icon theme-icon-light" aria-hidden="true">☀</span>
+            <span class="theme-toggle-icon theme-icon-aurora" aria-hidden="true">✦</span>
+          </button>
+          <span id="status" class="status" data-testid="backend-status">连接中…</span>
+        </div>
       </header>
 
       <main class="layout">
